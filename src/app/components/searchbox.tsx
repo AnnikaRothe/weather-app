@@ -19,7 +19,7 @@ export default function Searchbox(props: Props) { // Definiere die Searchbox-Kom
         {/* props.className ermöglicht die Hinzufügung benutzerdefinierter Klassen */}
         <input 
             type="text" // Eingabefeld-Typ ist Text
-            value={props.value} // Der Wert des Eingabefelds wird durch die Props gesteuert
+            defaultValue={props.value} // Der Wert des Eingabefelds wird durch die Props gesteuert
             onChange={props.onChange} // Wenn sich der Wert des Eingabefelds ändert, führe die onChange-Funktion aus
             placeholder="Search location.." // Platzhaltertext im Eingabefeld
             className="px-4 py-2 w-[230px] border border-gray-300 rounded-l-md focus:outline-none
