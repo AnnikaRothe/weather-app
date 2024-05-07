@@ -1,0 +1,10 @@
+/** @format */ 
+
+export function getDayorNightIcon(
+    iconName: string,
+    dateTimeString: string
+): string {
+    const hours = new Date(dateTimeString).getHours(); //Gethours from the given date and time string
+    const isDayTime = hours >= 6 && hours < 18; // Consider daytime from 6am to 9pm
+    return isDayTime ? iconName.replace(/.$/ , "d") : iconName.replace(/ .$/ , "n");
+}
