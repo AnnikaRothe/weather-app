@@ -1,10 +1,7 @@
 "use client";
-
-import Image from "next/image";
 import Navbar from "./components/navbar";
 import { useQuery } from "react-query";
 import axios from "axios";
-import { Console } from "console";
 import { format, fromUnixTime } from "date-fns";
 import { parseISO } from "date-fns/parseISO";
 import Container from "./components/Container";
@@ -14,6 +11,8 @@ import { getDayorNightIcon } from "./utils/getDayorNightIcon";
 import WeatherDetails from "./components/WeatherDetails";
 import { metersToKilometers } from "./utils/metersToKilometers";
 import { convertWindSpeed } from "./utils/convertWindSpeed";
+import ForcastWeatherDetail from "./components/ForcastWeatherDetail";
+
 
 interface WeatherData {
   cod: string;
@@ -79,7 +78,7 @@ export default function Home() {
     "repoData",
     async () => {
       const { data } = await axios.get(
-        `https://api.openweathermap.org/data/2.5/forecast?q=grube&appid=${process.env.NEXT_PUBLIC_WEATHER_KEY}&cnt=56`
+        `https://api.openweathermap.org/data/2.5/forecast?q=inverness&appid=${process.env.NEXT_PUBLIC_WEATHER_KEY}&cnt=56`
       );
       return data;
     }
@@ -88,6 +87,23 @@ export default function Home() {
   const firstData = data?.list[0];
 
   console.log("data", data);
+
+  const uniqueDates = [
+    ...new Set(
+      data?.list.map(
+        (entry) => new Date(entry.dt * 1000).toISOString().split("T")[0]
+      )
+    ),
+  ];
+
+  //Filtering data to get the first entry after 6am for each unique date
+  const firstDataForEachDate = uniqueDates.map((date) => {
+    return data?.list.find((entry) => {
+      const entryDate = new Date(entry.dt * 1000).toISOString().split("T")[0];
+      const entryTime = new Date(entry.dt * 1000).getHours();
+      return entryDate === date && entryTime >= 6;
+    });
+  });
 
   if (isLoading)
     return (
@@ -186,7 +202,32 @@ export default function Home() {
         </section>
         {/* 7 days forcast data*/}
         <section className="flex w-full flex-col gap-4">
-          <p className="text-2xl"> Forcast (7 days)</p>
+          <p className="text-2xl pt-9"> Forcast (7 days)</p>
+          {firstDataForEachDate.map((d, i) => (
+            <ForcastWeatherDetail
+              key={i}
+              description={d?.weather[0].description ?? ""}
+              weatherIcon={d?.weather[0].icon ?? "01d"}
+              date={format(parseISO(d?.dt_txt ?? ""), "dd.MM")}
+              day={format(parseISO(d?.dt_txt ?? ""), "EEEE")}
+              feels_like={d?.main.feels_like ?? 0}
+              temp={d?.main.temp ?? 0}
+              temp_max={d?.main.temp_max ?? 0}
+              temp_min={d?.main.temp_min ?? 0}
+              airPressure={`${d?.main.humidity} hPa`}
+              humidity={`${d?.main.humidity}%`}
+              sunrise={format(
+                fromUnixTime(data?.city.sunrise ?? 1715224923),
+                "H:mm"
+              )}
+              sunset={format(
+                fromUnixTime(data?.city.sunset ?? 1715281355),
+                "H:mm"
+              )}
+              visibility={metersToKilometers(d?.visibility ?? 10000)}
+              windSpeed={convertWindSpeed(d?.wind.speed ?? 1.64)}
+            />
+          ))}
         </section>
       </main>
     </div>
