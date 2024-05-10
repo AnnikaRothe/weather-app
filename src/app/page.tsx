@@ -76,7 +76,7 @@ interface CityInfo {
 }
 
 export default function Home() {
-  const [place, setPlace] = useAtom(placeAtom);
+  const [place] = useAtom(placeAtom);
   const [loadingCity] = useAtom(loadingCityAtom);
 
   const { isLoading, error, data, refetch } = useQuery<WeatherData>(
@@ -105,8 +105,8 @@ export default function Home() {
     ),
   ];
 
-  //Filtering data to get the first entry after 6am for each unique date
-  const firstDataForEachDate = uniqueDates.map((date) => {
+  //Filtering data to get the first entry after 6am for each unique date, starting from tomorrow
+  const firstDataForEachDate = uniqueDates.slice(1).map((date) => {
     return data?.list.find((entry) => {
       const entryDate = new Date(entry.dt * 1000).toISOString().split("T")[0];
       const entryTime = new Date(entry.dt * 1000).getHours();
@@ -207,7 +207,7 @@ export default function Home() {
                     )}
                   />
                 </Container>
-                <Container className="bg-yellow-300/80 px-6 gap-4 justify-between overflow-x-auto">
+                <Container className="bg-customColor px-6 gap-4 justify-between overflow-x-auto">
                   <WeatherDetails
                     visibility={metersToKilometers(
                       firstData?.visibility ?? 10000
@@ -230,7 +230,8 @@ export default function Home() {
             </section>
             {/* 7 days forcast data*/}
             <section className="flex w-full flex-col gap-4">
-              <p className="text-2xl pt-9"> Forcast (7 days)</p>
+              <p className="text-2xl pt-9"> Forcast for 5 days</p>
+
               {firstDataForEachDate.map((d, i) => (
                 <ForcastWeatherDetail
                   key={i}
@@ -245,14 +246,14 @@ export default function Home() {
                   airPressure={`${d?.main.humidity} hPa`}
                   humidity={`${d?.main.humidity}%`}
                   sunrise={format(
-                    fromUnixTime(data?.city.sunrise ?? 1715224923),
+                    fromUnixTime(data?.city.sunrise ?? 0),
                     "H:mm"
                   )}
                   sunset={format(
-                    fromUnixTime(data?.city.sunset ?? 1715281355),
+                    fromUnixTime(data?.city.sunset ?? 0),
                     "H:mm"
                   )}
-                  visibility={metersToKilometers(d?.visibility ?? 10000)}
+                  visibility={metersToKilometers(d?.visibility ?? 0)}
                   windSpeed={convertWindSpeed(d?.wind.speed ?? 1.64)}
                 />
               ))}
@@ -271,7 +272,7 @@ function WeatherSkeleton() {
       <div className="space-y-2 animate-pulse">
         {/* Date skeleton */}
         <div className="flex gap-1 text-2xl items-end">
-          <div className="h-6 w-24 bg-gray-300 rounded"></div>
+          <div className="h-6 w-24 bg-green-300 rounded"></div>
           <div className="h-6 w-24 bg-gray-300 rounded"></div>
         </div>
 
@@ -279,9 +280,9 @@ function WeatherSkeleton() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map((index) => (
             <div key={index} className="flex flex-col items-center space-y-2">
-              <div className="h-6 w-16 bg-gray-300 rounded"></div>
+              <div className="h-6 w-16 bg-green-300 rounded"></div>
               <div className="h-6 w-16 bg-gray-300 rounded-full"></div>
-              <div className="h-6 w-16 bg-gray-300 rounded"></div>
+              <div className="h-6 w-16 bg-green-300 rounded"></div>
             </div>
           ))}
         </div>
@@ -293,9 +294,9 @@ function WeatherSkeleton() {
 
         {[1, 2, 3, 4, 5, 6, 7].map((index) => (
           <div key={index} className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="h-8 w-28 bg-gray-300 rounded"></div>
+            <div className="h-8 w-28 bg-green-300 rounded"></div>
             <div className="h-10 w-10 bg-gray-300 rounded-full"></div>
-            <div className="h-8 w-28 bg-gray-300 rounded"></div>
+            <div className="h-8 w-28 bg-green-300 rounded"></div>
             <div className="h-8 w-28 bg-gray-300 rounded"></div>
           </div>
         ))}

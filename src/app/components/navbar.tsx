@@ -48,7 +48,7 @@ export default function Navbar({ location }: Props) {
     setShowSuggestions(false);
   }
 
-  function handleSubmitSearch(e: React.FormEvent<HTMLFormElement>) {
+  function handleSubmitSearch(e:React.FormEvent<HTMLFormElement>) {
     setLoadingCity(true);
     e.preventDefault();
     if (suggestions.length == 0) {
@@ -89,21 +89,21 @@ export default function Navbar({ location }: Props) {
       <nav className="shadow-sm px-20 sticky top-0 left-0 z-50 bg-white">
         <div className="h-[80px] w-full flex justify-between items-center max-w-7x1 px-3 mx-auto">
           <div className="flex items-center justify-center gap-2 ">
-            <h2 className="text-gray-500 text-3xl">Weather</h2>
+            <h2 className="text-customColor text-3xl">Weather</h2>
             <FaCloudSun className="text-3xl mt-1 text-yellow-500" />
           </div>
           <section className="flex gap-2 items-center">
             <MdMyLocation
               title="Your current location"
               onClick={handleCurrentLocation}
-              className="text-2xl text-gray-400 hover:opacity-70 cursor-pointer "
+              className="text-2xl text-customColor hover:opacity-70 cursor-pointer "
             />
             <GrLocation className="text-2xl" />
             <p className="text-slate-900/80 text-sm"> {location} </p>
             <div className="relative hidden md:flex">
               {/* SearchBox */}
               <Searchbox
-                value={"city"}
+                value={city}
                 onSubmit={handleSubmitSearch}
                 onChange={(e) => handleInputChange(e.target.value)}
               />
@@ -154,7 +154,7 @@ function SuggestionBox({
 }) {
   return (
     <>
-      {((showSuggestions && suggestions.length < 1) || error) && (
+      {((showSuggestions && suggestions.length > 1) || error) && (
         <ul
           className="mb-4 bg-white absolute border top-[44px] left-0 border-gray-300 rounded-md min-w-[200px] 
             flex flex-col gap-1 py-2 px-2"

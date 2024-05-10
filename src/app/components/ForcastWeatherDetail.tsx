@@ -4,6 +4,8 @@ import WeatherIcon from "./WeatherIcon";
 import WeatherDetails, { WeatherDetailsProps } from "./WeatherDetails";
 import { convertKelvinToCelsius } from "../utils/convertKelvinToCelsius";
 
+
+
 export interface ForcastWeatherDetailProps extends WeatherDetailsProps {
   weatherIcon: string;
   date: string;
@@ -17,9 +19,9 @@ export interface ForcastWeatherDetailProps extends WeatherDetailsProps {
 
 export default function ForcastWeatherDetail(props: ForcastWeatherDetailProps) {
   const {
-    weatherIcon = "02d",
-    date = "09.05",
-    day = "Thursday",
+    weatherIcon = "",
+    date = "",
+    day = "",
     temp,
     feels_like,
     temp_min,
